@@ -1,33 +1,21 @@
-Flight::route('POST /login', function () {
-$conn = Flight::db();
+ $.ajax({
+ url: "rest/login?email=" + email + "&pass=" + pass,
+ success: function (data) {
+ if (data.indexOf('logged') > -1) {
+ alert("Hello");
+ var button = document.getElementById("button");
 
-$email = Flight::request()->query->email;
-$pass = Flight::request()->query->pass;
+ button.style.display = "none";
 
-header('Content-type: application/json');
-
-$sql = "SELECT `user_email`, `user_password` FROM `users` WHERE `user_email` = ?";
-
-$stmt = $conn->prepare($sql);
-$stmt->execute([$email]);
-
-$results = $stmt->rowCount();
-
-if ($results > 0) {
-while ($row = $stmt->fetchAll(PDO::FETCH_ASSOC)) {
-if ($row[0]['user_email'] == $logEmail) {
-if (password_verify($passLog, $row[0]['user_password'])) {
-echo ('logged');
-session_start();
-$_SESSION["email"] = $row[0]['user_email'];
-} else {
-echo (json_encode('password'));
-}
-}else {
-echo (json_encode('email'));
-}
-}
-} else {
-echo (json_encode('mail'));
-}
-});
+ } else if (data.indexOf('password') > -1) {
+ alert("Password is incorrect.")
+ } else if (data.indexOf('email') > -1) {
+ alert("Email doesn't exists.")
+ } else {
+ alert("Email doesn't exists.")
+ }
+ },
+ error: function (data, err) {
+ alert("Error occurred, please try again later.")
+ }
+ })
